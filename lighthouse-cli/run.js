@@ -148,6 +148,14 @@ function runLighthouse(url, flags, config) {
   const shouldGather = flags.gatherMode || flags.gatherMode === flags.auditMode;
   let chromeP = Promise.resolve();
 
+  process.on('unhandledRejection', async (reason) => {
+    process.stderr.write(`Unhandled Rejection. Reason: ${reason}`);
+    await potentiallyKillChrome();
+    setTimeout(_ => {
+      process.exit(1);
+    }, 100);
+  });
+
   if (shouldGather) {
     chromeP = chromeP.then(_ =>
       getDebuggableChrome(flags).then(launchedChromeInstance => {
