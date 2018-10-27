@@ -840,7 +840,7 @@ class Driver {
     // happen _after_ onload: https://crbug.com/768961
     this.sendCommand('Page.enable');
     this.sendCommand('Emulation.setScriptExecutionDisabled', {value: disableJS});
-    this.setNextProtocolTimeout(30 * 1000);
+    this.setNextProtocolTimeout(60 * 1000); // see https://github.com/GoogleChrome/lighthouse/pull/6413
     this.sendCommand('Page.navigate', {url});
 
     if (waitForLoad) {
