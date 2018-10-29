@@ -286,18 +286,19 @@ class Driver {
       }
     }
     return new Promise(async (resolve, reject) => {
-      const asyncTimeout = setTimeout((_ => {
+      const asyncTimeout = timeout > 0 ? setTimeout((_ => {
         const err = new LHError(LHError.errors.PROTOCOL_TIMEOUT);
         err.message += ` Method: ${method}`;
         reject(err);
-      }), timeout);
+      }), timeout) : null;
       try {
-        const result = await this._connection.sendCommand(method, ...params);
-        clearTimeout(asyncTimeout);
-        resolve(result);
+        resolve(await this._connection.sendCommand(method, ...params));
       } catch (err) {
-        clearTimeout(asyncTimeout);
         reject(err);
+      } finally {
+        if (asyncTimeout) {
+          clearTimeout(asyncTimeout);
+        }
       }
     });
   }
@@ -840,7 +841,7 @@ class Driver {
     // happen _after_ onload: https://crbug.com/768961
     this.sendCommand('Page.enable');
     this.sendCommand('Emulation.setScriptExecutionDisabled', {value: disableJS});
-    this.setNextProtocolTimeout(60 * 1000); // see https://github.com/GoogleChrome/lighthouse/pull/6413
+    this.setNextProtocolTimeout(0); // We don't need a strict timeout for Page.navigate. See #6413.
     this.sendCommand('Page.navigate', {url});
 
     if (waitForLoad) {
