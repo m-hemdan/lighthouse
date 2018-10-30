@@ -294,7 +294,8 @@ class Driver {
         reject(err);
       }), timeout) : null;
       try {
-        resolve(await this._connection.sendCommand(method, ...params));
+        const result = await this._connection.sendCommand(method, ...params);
+        resolve(result);
       } catch (err) {
         reject(err);
       } finally {
@@ -843,7 +844,7 @@ class Driver {
     // happen _after_ onload: https://crbug.com/768961
     this.sendCommand('Page.enable');
     this.sendCommand('Emulation.setScriptExecutionDisabled', {value: disableJS});
-    this.setNextProtocolTimeout(0); // We don't need a strict timeout for Page.navigate. See #6413.
+    this.setNextProtocolTimeout(0); // We don't need a timeout for Page.navigate. See #6413.
     this.sendCommand('Page.navigate', {url});
 
     if (waitForLoad) {
