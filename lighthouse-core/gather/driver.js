@@ -288,11 +288,14 @@ class Driver {
       }
     }
     return new Promise(async (resolve, reject) => {
-      const asyncTimeout = timeout > 0 ? setTimeout((_ => {
-        const err = new LHError(LHError.errors.PROTOCOL_TIMEOUT);
-        err.message += ` Method: ${method}`;
-        reject(err);
-      }), timeout) : null;
+      let asyncTimeout;
+      if (timeout > 0) {
+        asyncTimeout = setTimeout((() => {
+          const err = new LHError(LHError.errors.PROTOCOL_TIMEOUT);
+          err.message += ` Method: ${method}`;
+          reject(err);
+        }), timeout);
+      }
       try {
         const result = await this._connection.sendCommand(method, ...params);
         resolve(result);
