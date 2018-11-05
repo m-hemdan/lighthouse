@@ -149,8 +149,12 @@ function runLighthouse(url, flags, config) {
   let chromeP = Promise.resolve();
 
   process.on('unhandledRejection', async (reason) => {
-    process.stderr.write(`Unhandled Rejection. Reason: ${reason}`);
-    await potentiallyKillChrome();
+    process.stderr.write(`Unhandled Rejection. Reason: ${reason}\n`);
+    try {
+      await potentiallyKillChrome();
+    } catch (err) {
+      process.stderr.write(`Couldn't quit Chrome process. ${err.toString()}\n`);
+    }
     setTimeout(_ => {
       process.exit(1);
     }, 100);
