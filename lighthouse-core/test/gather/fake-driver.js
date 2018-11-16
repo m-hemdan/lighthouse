@@ -43,6 +43,9 @@ const fakeDriver = {
   assertNoSameOriginServiceWorkerClients() {
     return Promise.resolve();
   },
+  assertPageNotHung() {
+    return Promise.resolve();
+  },
   reloadForCleanStateIfNeeded() {
     return Promise.resolve();
   },

@@ -345,6 +345,7 @@ class GatherRunner {
       gathererResult.push(artifactPromise);
       gathererResults[gatherer.name] = gathererResult;
       await artifactPromise.catch(() => {});
+      await driver.assertPageNotHung();
       log.timeEnd(status);
     }
     log.timeEnd(apStatus);

@@ -707,6 +707,15 @@ class Driver {
     }
   }
 
+  async assertPageNotHung() {
+    if (await this.isPageHung()) {
+      log.warn('Driver', 'Page appears to be hung, killing JavaScript...');
+      await this.sendCommand('Emulation.setScriptExecutionDisabled', {value: true});
+      await this.sendCommand('Runtime.terminateExecution');
+      throw new LHError(LHError.errors.PAGE_HUNG);
+    }
+  }
+
   /**
    * Returns a promise that resolves when:
    * - All of the following conditions have been met:
@@ -761,13 +770,7 @@ class Driver {
         waitForLoadEvent.cancel();
         waitForNetworkIdle.cancel();
         waitForCPUIdle && waitForCPUIdle.cancel();
-
-        if (await this.isPageHung()) {
-          log.warn('Driver', 'Page appears to be hung, killing JavaScript...');
-          await this.sendCommand('Emulation.setScriptExecutionDisabled', {value: true});
-          await this.sendCommand('Runtime.terminateExecution');
-          throw new LHError(LHError.errors.PAGE_HUNG);
-        }
+        await this.assertPageNotHung();
       };
     });
 

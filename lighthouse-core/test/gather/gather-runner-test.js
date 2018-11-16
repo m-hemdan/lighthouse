@@ -45,6 +45,9 @@ function getMockedEmulationDriver(emulationFn, netThrottleFn, cpuThrottleFn,
     assertNoSameOriginServiceWorkerClients() {
       return Promise.resolve();
     }
+    assertPageNotHung() {
+      return Promise.resolve();
+    }
     cacheNatives() {
       return Promise.resolve();
     }
@@ -501,6 +504,30 @@ describe('GatherRunner', function() {
       assert.equal(calledTrace, true);
       assert.equal(passData.trace, fakeTraceData);
     });
+  });
+
+  it('checks if the page is hung', async () => {
+    const url = 'https://example.com';
+
+    const driver = Object.assign({}, fakeDriver, {
+      assertPageNotHung() {
+        return Promise.reject(new Error('Hung'));
+      },
+    });
+
+    const passConfig = {
+      recordTrace: true,
+      gatherers: [
+        {instance: new TestGatherer()},
+      ],
+    };
+
+    try {
+      await GatherRunner.afterPass({url, driver, passConfig}, {TestGatherer: []});
+      throw new Error('Not hung');
+    } catch (err) {
+      expect(err.message).toEqual('Hung');
+    }
   });
 
   it('tells the driver to begin devtoolsLog collection', () => {
