@@ -15,4 +15,10 @@ module.exports = [
     errorCode: 'PAGE_HUNG',
     audits: {},
   },
+  {
+    requestedUrl: 'http://localhost:10200/infinite-loop.html?afterPass',
+    finalUrl: 'http://localhost:10200/infinite-loop.html?afterPass',
+    errorCode: 'PAGE_HUNG',
+    audits: {},
+  },
 ];

@@ -14,8 +14,17 @@
   This is the function that never ends.
 
   <script>
-    while (true) {
-      for (let i = 0; i < 1000000; i++) ;
+    function hang() {
+      while (true) {
+        for (let i = 0; i < 1000000; i++) ;
+      }
+    }
+
+    if (location.search.includes('afterPass')) {
+      // Force the JSLibraries gatherer to hang when it calls Object.entries
+      Object.entries = hang;
+    } else {
+      hang()
     }
   </script>
 </body>

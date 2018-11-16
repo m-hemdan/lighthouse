@@ -14,6 +14,7 @@ module.exports = {
     maxWaitForLoad: 5000,
     onlyAudits: [
       'first-contentful-paint',
+      'js-libraries', // Invoke JSLibraries gatherer so we can force it to hang if necessary
     ],
   },
 };
